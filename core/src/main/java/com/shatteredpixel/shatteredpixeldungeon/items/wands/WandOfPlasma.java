@@ -44,15 +44,19 @@ public class WandOfPlasma extends DamageWand {
     }
 
     @Override
-    public int min(int lvl) { return 5 + lvl; }
+    public int min(int lvl) { return (5 + lvl) * chargesPerCast(); }
 
     @Override
-    public int max(int lvl) {
-        return 10 + 5 * lvl;
-    }
+    public int max(int lvl) { return (10 + 5 * lvl) * chargesPerCast(); }
 
     private int distance() {
-        return level() * 2 + 4;
+        return buffedLvl() * 2 + 6;
+    }
+
+    @Override
+    protected int chargesPerCast() {
+        //consumes 30% of current charges, rounded up, with a minimum of one.
+        return Math.max(1, (int)Math.ceil(curCharges*0.3f));
     }
 
     @Override
@@ -65,29 +69,15 @@ public class WandOfPlasma extends DamageWand {
             CellEmitter.center(attack.collisionPos).burst(SmokeParticle.FACTORY, 6);
             Sample.INSTANCE.play(Assets.Sounds.PUFF);
         } else {
-            Plasma plasma = null;
-            for (Plasma charge : curUser.buffs(Plasma.class)) {
-                if (charge.cell == attack.collisionPos) {
-                    if (charge.chargesUsed > Math.min((level() + 3) / 5, 2)) { //gains at +2 and +7
-                        GLog.i(Messages.get(this, "charge_cap"));
-                        Sample.INSTANCE.play(Assets.Sounds.ZAP);
-                        return;
-                    }
-                    plasma = charge;
-                    plasma.prolong();
-                    break;
-                }
-            }
-            if (plasma == null) {
-                plasma = Buff.append(curUser, Plasma.class, 1f);
-                plasma.cell = attack.collisionPos;
-            }
+            Plasma plasma = Buff.append(curUser, Plasma.class, 1f);
+            plasma.cell = attack.collisionPos;
 
             plasma.damage += damageRoll();
             plasma.wandLevel = Math.max(buffedLvl(), plasma.wandLevel);
-            plasma.chargesUsed++;
+            plasma.chargesUsed = chargesPerCast();
+            plasma.delay(chargesPerCast());
 
-            CellEmitter.center(attack.collisionPos).burst(EnergyParticle.FACTORY, 8 * plasma.chargesUsed);
+            CellEmitter.center(attack.collisionPos).burst(EnergyParticle.FACTORY, 8 * chargesPerCast());
             Sample.INSTANCE.play(Assets.Sounds.BEACON);
         }
     }
@@ -180,7 +170,7 @@ public class WandOfPlasma extends DamageWand {
 
                 //always deals 2/3 damage at edge of blast
                 float multiplier =  1f;
-                if (chargesUsed - 1 != 0) {
+                if (chargesUsed > 1) {
                     multiplier -= .33333f * Dungeon.level.distance(cell, ch.pos) / (chargesUsed - 1);
                 }
                 ch.damage(Math.round(damage * multiplier), WandOfPlasma.class);
@@ -196,7 +186,7 @@ public class WandOfPlasma extends DamageWand {
             }
         }
 
-        public void prolong() { postpone(TICK); }
+        public void delay(float time) { postpone(time); }
 
         private static final String CELL = "cell";
         private static final String DAMAGE = "damage";
