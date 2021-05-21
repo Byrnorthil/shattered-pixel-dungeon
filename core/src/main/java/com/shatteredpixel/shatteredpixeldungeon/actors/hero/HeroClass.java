@@ -37,6 +37,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfInvisibility;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfLiquidFlame;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfMindVision;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
@@ -105,6 +106,11 @@ public enum HeroClass {
 		wand.level(7);
 		wand.gainCharge(7);
 		wand.collect();
+
+//		RingOfEnergy ring = (RingOfEnergy) new RingOfEnergy().identify();
+//		ring.level(20);
+//		hero.belongings.ring = ring;
+//		ring.activate(hero);
 
 		i = new Food();
 		if (!Challenges.isItemBlocked(i)) i.collect();

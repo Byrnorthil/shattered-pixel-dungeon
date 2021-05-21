@@ -23,10 +23,12 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
+import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PathFinder;
@@ -69,15 +71,14 @@ public class WandOfPlasma extends DamageWand {
             CellEmitter.center(attack.collisionPos).burst(SmokeParticle.FACTORY, 6);
             Sample.INSTANCE.play(Assets.Sounds.PUFF);
         } else {
-            Plasma plasma = Buff.append(curUser, Plasma.class, 1f);
+            Plasma plasma = Buff.append(curUser, Plasma.class, chargesPerCast() - 1);
             plasma.cell = attack.collisionPos;
 
             plasma.damage += damageRoll();
-            plasma.wandLevel = Math.max(buffedLvl(), plasma.wandLevel);
+            plasma.wandLevel = buffedLvl();
             plasma.chargesUsed = chargesPerCast();
-            plasma.delay(chargesPerCast());
 
-            CellEmitter.center(attack.collisionPos).burst(EnergyParticle.FACTORY, 8 * chargesPerCast());
+            plasma.startParticles();
             Sample.INSTANCE.play(Assets.Sounds.BEACON);
         }
     }
@@ -86,6 +87,14 @@ public class WandOfPlasma extends DamageWand {
     public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
         Viscosity.DeferedDamage deferred = Buff.affect( defender, Viscosity.DeferedDamage.class );
         deferred.prolong(Math.round(damage / 3f));
+    }
+
+    @Override
+    public String statsDesc() {
+        if (levelKnown)
+            return Messages.get(this, "stats_desc", chargesPerCast(), min(), max());
+        else
+            return Messages.get(this, "stats_desc", chargesPerCast(), min(0), max(0));
     }
 
     @Override
@@ -104,18 +113,23 @@ public class WandOfPlasma extends DamageWand {
 
     public static class Plasma extends FlavourBuff {
 
-        {
-            actPriority = BLOB_PRIO; //really hard to hit with otherwise
-        }
-
         private int cell;
         private int damage = 0;
         private int wandLevel = 0;
         private int chargesUsed = 0;
 
+        private Emitter emitter;
+
+        private void startParticles() {
+            emitter = CellEmitter.center(cell);
+            emitter.pour(EnergyParticle.FACTORY, 0.1f / (chargesUsed));
+        }
+
         @Override
         public void detach() {
             super.detach();
+
+            emitter.on = false;
 
             Sample.INSTANCE.play(Assets.Sounds.BLAST);
             if (Dungeon.level.heroFOV[cell]) {
@@ -124,6 +138,7 @@ public class WandOfPlasma extends DamageWand {
                         for (int n = 0; n < PathFinder.NEIGHBOURS9.length; n++) { //x shape
                             if (n % 2 == 0) PlasmaWave.blast(cell + PathFinder.NEIGHBOURS9[n], n * 0.015f + 0.01f);
                         }
+                        Camera.main.shake(1, 0.5f);
                         break;
                     case 2:
                         PlasmaWave.blast(cell, 0);
@@ -160,13 +175,7 @@ public class WandOfPlasma extends DamageWand {
             }
 
             for (Char ch: affected) {
-                //Soul mark method copied
-                if (ch != Dungeon.hero &&
-                        Dungeon.hero.subClass == HeroSubClass.WARLOCK &&
-                        //standard 1 - 0.92^x chance, plus 7%. Starts at 15%
-                        Random.Float() > (Math.pow(0.92f, (wandLevel * chargesUsed) + 1) - 0.07f)){
-                    SoulMark.prolong(ch, SoulMark.class, SoulMark.DURATION + wandLevel);
-                }
+                processSoulMark(ch, wandLevel, chargesUsed);
 
                 //always deals 2/3 damage at edge of blast
                 float multiplier =  1f;
@@ -185,8 +194,6 @@ public class WandOfPlasma extends DamageWand {
                 Dungeon.observe();
             }
         }
-
-        public void delay(float time) { postpone(time); }
 
         private static final String CELL = "cell";
         private static final String DAMAGE = "damage";
