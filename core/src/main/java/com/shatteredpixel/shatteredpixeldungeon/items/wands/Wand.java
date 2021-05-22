@@ -385,7 +385,7 @@ public abstract class Wand extends Item {
 			}
 		}
 
-		Invisibility.dispel();
+		Invisibility.dispel(curUser);
 		updateQuickslot();
 
 		curUser.spendAndNext( TIME_TO_ZAP );

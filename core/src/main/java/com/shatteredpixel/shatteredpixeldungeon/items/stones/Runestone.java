@@ -39,7 +39,7 @@ public abstract class Runestone extends Item {
 			super.onThrow( cell );
 		} else {
 			activate(cell);
-			Invisibility.dispel();
+			Invisibility.dispel(curUser);
 		}
 	}
 	

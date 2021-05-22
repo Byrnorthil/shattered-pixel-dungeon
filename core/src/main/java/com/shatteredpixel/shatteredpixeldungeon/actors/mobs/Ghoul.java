@@ -221,7 +221,7 @@ public class Ghoul extends Mob {
 
 		@Override
 		public boolean act() {
-			ghoul.sprite.visible = Dungeon.level.heroFOV[ghoul.pos];
+			ghoul.sprite.visible = ghoul.visible();
 
 			if (target.alignment != ghoul.alignment){
 				detach();

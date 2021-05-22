@@ -58,7 +58,7 @@ public class MageArmor extends ClassArmor {
 		
 		curUser.spend( Actor.TICK );
 		curUser.sprite.operate( curUser.pos );
-		Invisibility.dispel();
+		Invisibility.dispel(curUser);
 		curUser.busy();
 		
 		curUser.sprite.emitter().start( ElmoParticle.FACTORY, 0.025f, 20 );

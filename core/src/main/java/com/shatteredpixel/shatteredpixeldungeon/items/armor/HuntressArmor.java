@@ -63,7 +63,7 @@ public class HuntressArmor extends ClassArmor {
 						curUser.attack( targets.get( this ) );
 						targets.remove( this );
 						if (targets.isEmpty()) {
-							Invisibility.dispel();
+							Invisibility.dispel(curUser);
 							curUser.spendAndNext( curUser.attackDelay() );
 						}
 					}

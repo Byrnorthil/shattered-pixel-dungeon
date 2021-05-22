@@ -22,6 +22,9 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
 public class ThrowingStone extends MissileWeapon {
@@ -37,7 +40,13 @@ public class ThrowingStone extends MissileWeapon {
 		baseUses = 5;
 		sticky = false;
 	}
-	
+
+	@Override
+	public int proc(Char attacker, Char defender, int damage) {
+		Buff.affect(defender, Invisibility.class, 5f);
+		return super.proc(attacker, defender, damage);
+	}
+
 	@Override
 	public int value() {
 		return super.value()/2; //half normal value

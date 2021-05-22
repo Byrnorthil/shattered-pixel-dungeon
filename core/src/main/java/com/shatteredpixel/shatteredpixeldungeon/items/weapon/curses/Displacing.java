@@ -59,7 +59,7 @@ public class Displacing extends Weapon.Enchantment {
 					((Mob) defender).state = ((Mob) defender).WANDERING;
 				}
 				defender.sprite.place( defender.pos );
-				defender.sprite.visible = Dungeon.level.heroFOV[defender.pos];
+				defender.sprite.visible = defender.visible();
 
 				return 0;
 

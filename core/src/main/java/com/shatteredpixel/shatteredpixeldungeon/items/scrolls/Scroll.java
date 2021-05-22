@@ -181,7 +181,7 @@ public abstract class Scroll extends Item {
 	public abstract void doRead();
 
 	protected void readAnimation() {
-		Invisibility.dispel();
+		Invisibility.dispel(curUser);
 		curUser.spend( TIME_TO_READ );
 		curUser.busy();
 		((HeroSprite)curUser.sprite).read();

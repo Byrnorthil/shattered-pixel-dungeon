@@ -88,7 +88,7 @@ public class WarriorArmor extends ClassArmor {
 						CellEmitter.center(dest).burst(Speck.factory(Speck.DUST), 10);
 						Camera.main.shake(2, 0.5f);
 
-						Invisibility.dispel();
+						Invisibility.dispel(curUser);
 						curUser.spendAndNext(LEAP_TIME);
 					}
 				});

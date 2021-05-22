@@ -209,7 +209,7 @@ public class QuickSlotButton extends Button implements WndBag.Listener {
 				Actor.chars().contains( lastTarget ) &&
 				lastTarget.isAlive() &&
 				lastTarget.alignment != Char.Alignment.ALLY &&
-				Dungeon.level.heroFOV[lastTarget.pos]) {
+				lastTarget.visible()) {
 
 			targeting = true;
 			CharSprite sprite = lastTarget.sprite;

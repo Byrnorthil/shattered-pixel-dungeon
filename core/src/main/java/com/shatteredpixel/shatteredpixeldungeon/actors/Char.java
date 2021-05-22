@@ -44,6 +44,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FrostImbue;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Haste;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hex;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LifeLink;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicalSleep;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ooze;
@@ -437,6 +438,7 @@ public abstract class Char extends Actor {
 	// atm attack is always post-armor and defence is already pre-armor
 	
 	public int attackProc( Char enemy, int damage ) {
+		Invisibility.dispel(this);
 		if ( buff(Weakness.class) != null ){
 			damage *= 0.67f;
 		}
@@ -699,6 +701,11 @@ public abstract class Char extends Actor {
 	public float stealth() {
 		return 0;
 	}
+
+	public boolean visible() {
+		return (invisible == 0 || alignment == Alignment.ALLY || Dungeon.hero.mindVisionEnemies.contains(this))
+			&& Dungeon.level.heroFOV[pos];
+	}
 	
 	public void move( int step ) {
 
@@ -722,7 +729,7 @@ public abstract class Char extends Actor {
 		pos = step;
 		
 		if (this != Dungeon.hero) {
-			sprite.visible = Dungeon.level.heroFOV[pos];
+			sprite.visible = visible();
 		}
 		
 		Dungeon.level.occupyCell(this );

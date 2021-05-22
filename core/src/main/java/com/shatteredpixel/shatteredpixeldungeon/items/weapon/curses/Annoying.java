@@ -48,7 +48,7 @@ public class Annoying extends Weapon.Enchantment {
 			}
 			attacker.sprite.centerEmitter().start(Speck.factory(Speck.SCREAM), 0.3f, 3);
 			Sample.INSTANCE.play(Assets.Sounds.MIMIC);
-			Invisibility.dispel();
+			Invisibility.dispel(attacker);
 			GLog.n(Messages.get(this, "msg_" + (Random.Int(5)+1)));
 		}
 

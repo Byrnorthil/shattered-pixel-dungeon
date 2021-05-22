@@ -70,7 +70,7 @@ public abstract class InventoryStone extends Runestone {
 		curUser.sprite.operate(curUser.pos);
 		
 		Sample.INSTANCE.play( Assets.Sounds.READ );
-		Invisibility.dispel();
+		Invisibility.dispel(curUser);
 	}
 	
 	protected abstract void onItemSelected( Item item );

@@ -61,7 +61,7 @@ public abstract class InventorySpell extends Spell {
 				(curUser.sprite).operate( curUser.pos );
 				
 				Sample.INSTANCE.play( Assets.Sounds.READ );
-				Invisibility.dispel();
+				Invisibility.dispel(curUser);
 				
 			} else {
 				curItem.collect( curUser.belongings.backpack );

@@ -80,7 +80,7 @@ public class WarpingTrap extends Trap {
 						((Mob) ch).state = ((Mob) ch).WANDERING;
 					}
 					ch.sprite.place(ch.pos);
-					ch.sprite.visible = Dungeon.level.heroFOV[pos];
+					ch.sprite.visible = ch.visible();
 					
 				}
 			}

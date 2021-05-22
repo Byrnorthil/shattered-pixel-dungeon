@@ -96,7 +96,7 @@ public class MirrorImage extends NPC {
 	public void duplicate( Hero hero ) {
 		this.hero = hero;
 		heroID = this.hero.id();
-		Buff.affect(this, MirrorInvis.class, Short.MAX_VALUE);
+		Buff.affect(this, Invisibility.class, Short.MAX_VALUE);
 	}
 	
 	@Override
@@ -151,11 +151,6 @@ public class MirrorImage extends NPC {
 	public int attackProc( Char enemy, int damage ) {
 		damage = super.attackProc( enemy, damage );
 		
-		MirrorInvis buff = buff(MirrorInvis.class);
-		if (buff != null){
-			buff.detach();
-		}
-		
 		if (enemy instanceof Mob) {
 			((Mob)enemy).aggro( this );
 		}
@@ -188,17 +183,5 @@ public class MirrorImage extends NPC {
 		immunities.add( CorrosiveGas.class );
 		immunities.add( Burning.class );
 		immunities.add( Corruption.class );
-	}
-	
-	public static class MirrorInvis extends Invisibility {
-		
-		{
-			announced = false;
-		}
-		
-		@Override
-		public int icon() {
-			return BuffIndicator.NONE;
-		}
 	}
 }

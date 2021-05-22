@@ -377,7 +377,7 @@ public class Hero extends Char {
 		belongings.stashedWeapon = belongings.weapon;
 		belongings.weapon = wep;
 		boolean hit = attack( enemy );
-		Invisibility.dispel();
+		Invisibility.dispel(this);
 		belongings.weapon = belongings.stashedWeapon;
 		belongings.stashedWeapon = null;
 		
@@ -1204,7 +1204,7 @@ public class Hero extends Char {
 
 		Mob target = null;
 		for (Mob m : Dungeon.level.mobs.toArray(new Mob[0])) {
-			if (fieldOfView[ m.pos ] && m.alignment == Alignment.ENEMY) {
+			if (fieldOfView[ m.pos ] && m.invisible == 0 && m.alignment == Alignment.ENEMY) {
 				visible.add(m);
 				if (!visibleEnemies.contains( m )) {
 					newMob = true;
@@ -1721,7 +1721,7 @@ public class Hero extends Char {
 		
 		boolean hit = attack( enemy );
 		
-		Invisibility.dispel();
+		Invisibility.dispel(this);
 		spend( attackDelay() );
 
 		if (hit && subClass == HeroSubClass.GLADIATOR){

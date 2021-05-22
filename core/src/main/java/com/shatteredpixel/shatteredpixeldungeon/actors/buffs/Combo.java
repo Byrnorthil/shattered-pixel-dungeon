@@ -386,7 +386,7 @@ public class Combo extends Buff implements ActionIndicator.Action {
 
 		}
 
-		Invisibility.dispel();
+		Invisibility.dispel(hero);
 
 		//Post-attack behaviour
 		switch(moveBeingUsed){
